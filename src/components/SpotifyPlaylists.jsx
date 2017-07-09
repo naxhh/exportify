@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import { GridList, GridTile } from 'material-ui/GridList'
 import Subheader from 'material-ui/Subheader'
 import IconButton from 'material-ui/IconButton'
@@ -8,13 +8,13 @@ const styles = {
   root: {
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    justifyContent: 'space-around'
   },
   gridList: {
     width: 800,
     height: 800,
-    overflowY: 'auto',
-  },
+    overflowY: 'auto'
+  }
 }
 
 // TODO: move http logic out of the component
@@ -22,7 +22,7 @@ const styles = {
 // TODO handle rejection.
 
 const spotifyHeaders = (accessToken) => {
-  const headers = new Headers()
+  const headers = new window.Headers()
   headers.append('Authorization', `Bearer ${accessToken}`)
 
   return headers
@@ -30,7 +30,7 @@ const spotifyHeaders = (accessToken) => {
 
 // TODO: pagination
 const fetchSpotifyPlaylists = accessToken =>
-  fetch('https://api.spotify.com/v1/me/playlists', { headers: spotifyHeaders(accessToken)}).then(r => r.json())
+  window.fetch('https://api.spotify.com/v1/me/playlists', { headers: spotifyHeaders(accessToken) }).then(r => r.json())
 
 const mapSpotifyPlaylists = httpResponse =>
   httpResponse.items.map(playlist => ({
@@ -44,14 +44,11 @@ const mapSpotifyPlaylists = httpResponse =>
 const getSpotifyPlaylists = (accessToken) =>
   fetchSpotifyPlaylists(accessToken).then(mapSpotifyPlaylists)
 
-
 class SpotifyPlaylists extends Component {
   constructor (props) {
     super(props)
 
     this.state = {playlists: []}
-
-    const { location } = this.props
 
     /**
      * Hash params from the spotify auth.
@@ -66,7 +63,7 @@ class SpotifyPlaylists extends Component {
       return acc
     }, {})
   }
-  
+
   componentDidMount () {
     getSpotifyPlaylists(this._hashParams['access_token']).then(playlists => {
       this.setState({ playlists })
@@ -81,8 +78,8 @@ class SpotifyPlaylists extends Component {
         tooltip='Export tracks'
         href={`/spotify/export#access_token=${this._hashParams['access_token']}&api_tracks=${playlist.apiTracks}`}
         >
-          <ImportExport color='white' />
-        </IconButton>}
+        <ImportExport color='white' />
+      </IconButton>}
     >
       <img src={playlist.img} alt={playlist.name} />
     </GridTile>
@@ -97,6 +94,10 @@ class SpotifyPlaylists extends Component {
       </div>
     )
   }
+}
+
+SpotifyPlaylists.propTypes = {
+  location: PropTypes.object
 }
 
 export default SpotifyPlaylists

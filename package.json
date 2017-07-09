@@ -9,10 +9,10 @@
     "start": "sui-bundler dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
   "license": "MIT",
   "devDependencies": {
     "@schibstedspain/sui-bundler": "1.3.0",
+    "@schibstedspain/sui-lint": "2.3.0",
     "@schibstedspain/sui-mono": "1.14.0"
   },
   "dependencies": {
@@ -21,5 +21,7 @@
     "react-dom": "15.6.1",
     "react-router-dom": "4.1.1",
     "react-tap-event-plugin": "2.0.1"
-  }
+  },
+  "eslintConfig": {"extends": ["./node_modules/@schibstedspain/sui-lint/eslintrc.js"]},
+  "sasslintConfig": "./node_modules/@schibstedspain/sui-lint/sass-lint.yml"
 }

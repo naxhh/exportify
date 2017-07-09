@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, PropTypes } from 'react'
 import CircularProgress from 'material-ui/CircularProgress'
 import {
   Table,
@@ -6,23 +6,23 @@ import {
   TableHeader,
   TableHeaderColumn,
   TableRow,
-  TableRowColumn,
+  TableRowColumn
 } from 'material-ui/Table'
 
 // TODO: use react, so we can also provide the album info here from the state
 // and we don't have to pass everything from params... meh
 
-const textareaStyle = {width: '100%', height:'200px'}
+const textareaStyle = {width: '100%', height: '200px'}
 
 const spotifyHeaders = (accessToken) => {
-  const headers = new Headers()
+  const headers = new window.Headers()
   headers.append('Authorization', `Bearer ${accessToken}`)
 
   return headers
 }
 
 const fetchSpotifyTracks = (accessToken, apiUrl) =>
-  fetch(apiUrl, { headers: spotifyHeaders(accessToken) }).then(r => r.json())
+  window.fetch(apiUrl, { headers: spotifyHeaders(accessToken) }).then(r => r.json())
 
 const mapSpotifyTracks = httpResponse =>
   httpResponse.items.map(song => ({
@@ -36,7 +36,7 @@ const getSpotifyTracks = (accessToken, apiUrl) =>
   fetchSpotifyTracks(accessToken, apiUrl).then(mapSpotifyTracks)
 
 const fetchYoutubeLink = track =>
-  fetch(`https://www.googleapis.com/youtube/v3/search?part=id&q=${track.name}%20-%20${track.album}&key=AIzaSyBFUrzlhVrfOfNGbq8oUe115i3GCoIzbQ4`)
+  window.fetch(`https://www.googleapis.com/youtube/v3/search?part=id&q=${track.name}%20-%20${track.album}&key=AIzaSyBFUrzlhVrfOfNGbq8oUe115i3GCoIzbQ4`)
     .then(r => r.json())
 
 // TODO: return more ids so user can choose a better link
@@ -65,14 +65,11 @@ const updateYoutubeLinks = (tracks, cb) => {
   }, Promise.resolve())
 }
 
-
 class SpotifyExportPlaylist extends Component {
   constructor (props) {
     super(props)
 
     this.state = {tracks: [], links: {}}
-
-    const { location } = this.props
 
     /**
      * Hash params from the spotify auth.
@@ -94,8 +91,8 @@ class SpotifyExportPlaylist extends Component {
         updateYoutubeLinks(tracks, mapping => {
           const links = mapping.reduce((acc, item) => {
             const [spotifyKey, youtubeId] = item
-            acc[spotifyKey] = youtubeId ? youtubeId : 'unknown error :('
-            
+            acc[spotifyKey] = youtubeId || 'unknown error :('
+
             return acc
           }, this.state.links)
 
@@ -145,6 +142,10 @@ class SpotifyExportPlaylist extends Component {
       </div>
     )
   }
+}
+
+SpotifyExportPlaylist.propTypes = {
+  location: PropTypes.object
 }
 
 export default SpotifyExportPlaylist
